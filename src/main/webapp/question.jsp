@@ -7,7 +7,9 @@
 <body>
     <h1>${quest.currentQuestion}</h1>
     <form action="quest" method="post">
-        <input type="text" name="answer" required>
+    <c:forEach items="${answers}" var="answer">
+        <input type="radio" name="answer" value="${answer}" required> ${answer}<br>
+    </c:forEach>
         <input type="submit" value="Submit">
     </form>
 </body>

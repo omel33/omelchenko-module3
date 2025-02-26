@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to quest</title>
+    <title>Welcome to the Quest</title>
 </head>
 <body>
-    <h1>Hello to the Text Quest</h1>
-    <p>You are about to embark on an exciting adventure. Make your choices wisely!</p>
+    <h1>Welcome to the Text Quest!</h1>
     <form action="quest" method="post">
-        <input type="submit" value="Start Quest">
+        <label for="name">Enter your name:</label>
+        <input type="text" id="playerId" name="playerName" required><br>
+        <input type="submit" value="Start the Quest">
     </form>
 </body>
 </html>
