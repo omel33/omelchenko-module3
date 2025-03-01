@@ -37,5 +37,12 @@ public class Quest {
             finished = true;
         }
     }
+    public String getCurrentQuestion() {
+        return steps.get(currentStep);
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
 
 }
