@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Quest Result</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <h1>Quest Finished!</h1>

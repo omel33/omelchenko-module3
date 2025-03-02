@@ -24,10 +24,11 @@ public class QuestServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String playerName = req.getParameter("playerName");
-        if(playerName == null){
+        if (playerName != null) { // Виправлено умову
             SessionUtil.storePlayerName(req.getSession(), playerName);
             SessionUtil.incrementGamesPlayed(req.getSession());
         }
+
         String answer = req.getParameter("answer");
         Quest quest = SessionUtil.getQuestFromSession(req.getSession());
 
@@ -39,7 +40,7 @@ public class QuestServlet extends HttpServlet {
 
         quest.nextStep(answer);
         req.setAttribute("quest", quest);
-        req.setAttribute("anwers",quest.getCurrentStep());
+        req.setAttribute("answers", quest.getAnswers()); // Виправлено атрибут
 
         if (quest.isFinished()) {
             log.info("Quest finished for session: {}", req.getSession().getId());

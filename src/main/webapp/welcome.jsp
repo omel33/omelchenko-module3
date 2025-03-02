@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Welcome to the Quest</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <h1>Welcome to the Text Quest!</h1>
