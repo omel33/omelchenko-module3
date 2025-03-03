@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Quest</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
     <h1>${quest.currentQuestion}</h1>
