@@ -10,10 +10,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProgressManagerTest {
+ class ProgressManagerTest {
 
     @Test
-    public void testSaveAndLoadProgress() {
+     void testSaveAndLoadProgress() {
         PlayerProgress progress = new PlayerProgress("John", 2, 3);
 
         ProgressManager.saveProgress(progress);
@@ -32,7 +32,7 @@ public class ProgressManagerTest {
     }
 
     @Test
-    public void testLoadProgressWhenFileDoesNotExist() {
+   void testLoadProgressWhenFileDoesNotExist() {
         new File(Paths.get("player_progress.txt").toUri()).delete();
 
         Optional<PlayerProgress> loadedProgressOptional = ProgressManager.loadProgress();

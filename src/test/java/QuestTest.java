@@ -5,10 +5,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuestTest {
+ class QuestTest {
 
     @Test
-    public void testInitialState() {
+    void testInitialState() {
         Quest quest = new Quest();
 
         // Перевірка початкового питання
@@ -23,7 +23,7 @@ public class QuestTest {
     }
 
     @Test
-    public void testGoNorthPath() {
+    void testGoNorthPath() {
         Quest quest = new Quest();
 
         quest.nextStep("Go North");
@@ -46,11 +46,11 @@ public class QuestTest {
     }
 
     @Test
-    public void testGoSouthPath() {
+     void testGoSouthPath() {
         Quest quest = new Quest();
 
         quest.nextStep("Go South");
-        assertEquals("You fill in the trap! Game Over!", quest.getCurrentQuestion());
+        assertEquals("You fell into a trap! Game Over!", quest.getCurrentQuestion());
 
         assertTrue(quest.isFinished());
 
@@ -58,7 +58,7 @@ public class QuestTest {
     }
 
     @Test
-    public void testMonsterPath() {
+     void testMonsterPath() {
         Quest quest = new Quest();
 
         quest.nextStep("Go North");
@@ -72,7 +72,7 @@ public class QuestTest {
         assertEquals(expectedAnswers5, quest.getAnswers());
 
         quest.nextStep("Attack");
-        assertEquals("You defeat the monster! Continue?", quest.getCurrentQuestion());
+        assertEquals("You defeated the monster! Continue?", quest.getCurrentQuestion());
 
         List<String> expectedAnswers6 = List.of("Yes", "No");
         assertEquals(expectedAnswers6, quest.getAnswers());
@@ -85,7 +85,7 @@ public class QuestTest {
     }
 
     @Test
-    public void testInvalidAnswer() {
+     void testInvalidAnswer() {
         Quest quest = new Quest();
 
         quest.nextStep("Invalid Answer");
