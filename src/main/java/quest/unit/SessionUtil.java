@@ -35,5 +35,7 @@ public class SessionUtil {
     public static int getGamesPlayed(HttpSession session) {
         return (Integer) session.getAttribute(GAMES_PLAYED_ATTRIBUTE);
     }
-
+    public static void setGamesPlayed(HttpSession session, int gamesPlayed) {
+        session.setAttribute(GAMES_PLAYED_ATTRIBUTE, gamesPlayed);
+    }
 }
