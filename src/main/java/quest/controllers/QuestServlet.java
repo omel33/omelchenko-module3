@@ -23,20 +23,23 @@ public class QuestServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Завантажуємо прогрес гравця
         ProgressManager.loadProgress().ifPresent(progress -> {
-            // Якщо прогрес існує, зберігаємо дані в сесії
             SessionUtil.storePlayerName(req.getSession(), progress.getPlayerName());
             SessionUtil.setGamesPlayed(req.getSession(), progress.getGamesPlayed());
         });
 
-        // Перенаправляємо на сторінку welcome.jsp
         req.getRequestDispatcher("/welcome.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        String playAgain= req.getParameter("playAgain");
+        if("playAgain".equals(playAgain)){
+            req.getSession().invalidate();
+            resp.sendRedirect(req.getContextPath() + "/quest");
+            return;
+        }
         Optional.ofNullable(req.getParameter("playerName"))
                 .ifPresent(name -> {
                     SessionUtil.storePlayerName(req.getSession(), name);
