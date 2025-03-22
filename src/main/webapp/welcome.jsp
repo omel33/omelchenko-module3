@@ -6,7 +6,8 @@
 </head>
 <body>
     <h1>Welcome to the Text Quest!</h1>
-    <p>Game played:${sessionScope.gamesPlayed}</p>
+    <p>Congratulations, you have completed the quest!</p>
+    <p>Total games played: ${totalGamesPlayed}</p>
     <form action="quest" method="post">
         <label for="playerId">Enter your name:</label>
         <input type="text" id="playerId" name="playerName" required><br>

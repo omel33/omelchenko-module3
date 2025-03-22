@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import quest.model.PlayerProgress;
 import quest.model.Quest;
+import quest.unit.GameStatistics;
 import quest.unit.ProgressManager;
 import quest.unit.SessionUtil;
 
@@ -19,7 +20,7 @@ import static quest.unit.ProgressManager.saveProgress;
 @Slf4j
 @WebServlet("/quest")
 public class QuestServlet extends HttpServlet {
-
+    private final GameStatistics gameStatistics=new GameStatistics();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,6 +28,7 @@ public class QuestServlet extends HttpServlet {
             SessionUtil.storePlayerName(req.getSession(), progress.getPlayerName());
             SessionUtil.setGamesPlayed(req.getSession(), progress.getGamesPlayed());
         });
+        req.setAttribute("totalGamesPlayed", gameStatistics.getGamesPlayed());
 
         req.getRequestDispatcher("/welcome.jsp").forward(req, resp);
     }
@@ -44,6 +46,7 @@ public class QuestServlet extends HttpServlet {
                 .ifPresent(name -> {
                     SessionUtil.storePlayerName(req.getSession(), name);
                     SessionUtil.incrementGamesPlayed(req.getSession());
+                    gameStatistics.incrementGamesPlayed();
                 });
 
         Quest quest = Optional.ofNullable(SessionUtil.getQuestFromSession(req.getSession()))
