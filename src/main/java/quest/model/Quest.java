@@ -21,7 +21,7 @@ public class Quest {
     private final Map<Integer, Map<String, Integer>> transitions = new HashMap<>();
 
     public Quest() {
-        // Ініціалізація кроків, відповідей та переходів
+
         steps.put(0, "You woke up in the forest. What will you do?");
         answers.put(0, List.of("Go North", "Go South", "Climb a tree"));
         transitions.put(0, Map.of(

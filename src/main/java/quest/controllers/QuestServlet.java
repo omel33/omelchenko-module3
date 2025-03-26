@@ -71,7 +71,7 @@ public class QuestServlet extends HttpServlet {
 
         saveProgress(req, quest);
     }
-    private void saveProgress(HttpServletRequest req, Quest quest) {
+    void saveProgress(HttpServletRequest req, Quest quest) {
         PlayerProgress progress = new PlayerProgress(
                 SessionUtil.getPlayerName(req.getSession()),
                 quest.getCurrentStep(),

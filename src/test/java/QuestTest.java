@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
     void testInitialState() {
         Quest quest = new Quest();
 
-        // Перевірка початкового питання
         assertEquals("You woke up in the forest. what will you do?", quest.getCurrentQuestion());
 
         List<String> expectedAnswers1 = List.of("Go North", "Go South");
@@ -94,4 +93,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
         assertEquals("You woke up in the forest. what will you do?", quest.getCurrentQuestion());
     }
+     @Test
+     void testAllInitialOptions() {
+         Quest quest = new Quest();
+
+         quest.nextStep("Go North");
+         assertEquals(1, quest.getCurrentStep());
+
+         quest = new Quest();
+         quest.nextStep("Go South");
+         assertEquals(2, quest.getCurrentStep());
+
+         quest = new Quest();
+         quest.nextStep("Climb a tree");
+         assertEquals(3, quest.getCurrentStep());
+     }
+     @Test
+     void testGetAnswersForAllSteps() {
+         Quest quest = new Quest();
+
+         for (int i = 0; i < 13; i++) {
+             quest.setCurrentStep(i);
+             if (quest.getAnswers() != null) {
+                 assertFalse(quest.getAnswers().isEmpty());
+             }
+         }
+     }
 }
