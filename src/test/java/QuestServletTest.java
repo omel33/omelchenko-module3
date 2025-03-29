@@ -11,13 +11,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import quest.model.PlayerProgress;
 import quest.model.Quest;
-import quest.unit.*;
+import quest.unit.GameStatistics;
+import quest.unit.ProgressManager;
+import quest.unit.SessionUtil;
 
 import java.io.IOException;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-
 
 class QuestServletTest {
     @Mock
@@ -28,8 +29,6 @@ class QuestServletTest {
     private HttpSession session;
     @Mock
     private RequestDispatcher requestDispatcher;
-    @Mock
-    private ProgressManager progressManager;
     @Mock
     private GameStatistics gameStatistics;
 
@@ -46,19 +45,24 @@ class QuestServletTest {
 
     @Test
     void testDoGetWithSavedProgress() throws ServletException, IOException {
-        // Підготовка тестових даних
         PlayerProgress progress = new PlayerProgress("TestPlayer", 2, 3);
-        when(progressManager.loadProgress()).thenReturn(Optional.of(progress));
-        when(gameStatistics.getGamesPlayed()).thenReturn(10);
 
-        // Виклик методу
-        servlet.doGet(request, response);
+        try (var mockedProgressManager = mockStatic(ProgressManager.class);
+             var mockedSessionUtil = mockStatic(SessionUtil.class)) {
 
-        // Перевірки
-        verify(session).setAttribute(eq("playerName"), eq("TestPlayer"));
-        verify(session).setAttribute(eq("gamesPlayed"), eq(3));
-        verify(request).setAttribute(eq("totalGamesPlayed"), eq(10));
-        verify(requestDispatcher).forward(request, response);
+            mockedProgressManager.when(ProgressManager::loadProgress).thenReturn(Optional.of(progress));
+            mockedSessionUtil.when(() -> SessionUtil.getGamesPlayed(session)).thenReturn(3);
+            mockedSessionUtil.when(() -> SessionUtil.getPlayerName(session)).thenReturn("TestPlayer");
+
+            when(gameStatistics.getGamesPlayed()).thenReturn(10);
+
+            servlet.doGet(request, response);
+
+            mockedSessionUtil.verify(() -> SessionUtil.storePlayerName(session, "TestPlayer"));
+            mockedSessionUtil.verify(() -> SessionUtil.setGamesPlayed(session, 3));
+            verify(request).setAttribute(eq("totalGamesPlayed"), eq(10));
+            verify(requestDispatcher).forward(request, response);
+        }
     }
 
     @Test
@@ -66,12 +70,15 @@ class QuestServletTest {
         when(request.getParameter("playerName")).thenReturn("NewPlayer");
         when(session.getAttribute("quest")).thenReturn(null);
 
-        servlet.doPost(request, response);
+        try (var mockedSessionUtil = mockStatic(SessionUtil.class)) {
+            servlet.doPost(request, response);
 
-        verify(session).setAttribute(eq("playerName"), eq("NewPlayer"));
-        verify(session).setAttribute(eq("gamesPlayed"), anyInt());
-        verify(gameStatistics).incrementGamesPlayed();
-        verify(requestDispatcher).forward(request, response);
+            // Перевіряємо, що створюється новий квест і зберігається в сесії
+            mockedSessionUtil.verify(() -> SessionUtil.storePlayerName(session, "NewPlayer"));
+            mockedSessionUtil.verify(() -> SessionUtil.incrementGamesPlayed(session));
+            verify(gameStatistics).incrementGamesPlayed();
+            verify(requestDispatcher).forward(request, response);
+        }
     }
 
     @Test
@@ -80,11 +87,16 @@ class QuestServletTest {
         when(session.getAttribute("quest")).thenReturn(existingQuest);
         when(request.getParameter("answer")).thenReturn("Go North");
 
-        servlet.doPost(request, response);
+        try (var mockedSessionUtil = mockStatic(SessionUtil.class)) {
+            mockedSessionUtil.when(() -> SessionUtil.getQuestFromSession(session)).thenReturn(existingQuest);
 
-        verify(request).setAttribute(eq("quest"), any(Quest.class));
-        verify(request).setAttribute(eq("answers"), anyList());
-        verify(requestDispatcher).forward(request, response);
+            servlet.doPost(request, response);
+
+            // Перевіряємо, що відповіді оновлюються
+            verify(request).setAttribute(eq("quest"), eq(existingQuest));
+            verify(request).setAttribute(eq("answers"), anyList());
+            verify(requestDispatcher).forward(request, response);
+        }
     }
 
     @Test
@@ -102,10 +114,11 @@ class QuestServletTest {
         Quest quest = mock(Quest.class);
         when(quest.isFinished()).thenReturn(true);
         when(session.getAttribute("quest")).thenReturn(quest);
+        when(quest.getCurrentResult()).thenReturn("Перемога!");
 
         servlet.doPost(request, response);
 
-        verify(request).setAttribute(eq("result"), anyString());
+        verify(request).setAttribute(eq("result"), eq("Перемога!"));
         verify(requestDispatcher).forward(request, response);
     }
 
@@ -116,12 +129,18 @@ class QuestServletTest {
         Quest quest = new Quest();
         quest.nextStep("Go North");
 
-        servlet.saveProgress(request, quest);
+        try (var mockedSessionUtil = mockStatic(SessionUtil.class);
+             var mockedProgressManager = mockStatic(ProgressManager.class)) {
+            mockedSessionUtil.when(() -> SessionUtil.getPlayerName(session)).thenReturn("TestPlayer");
+            mockedSessionUtil.when(() -> SessionUtil.getGamesPlayed(session)).thenReturn(5);
 
-        verify(progressManager).saveProgress(argThat(p ->
-                p.getPlayerName().equals("TestPlayer") &&
-                        p.getCurrentStep() == 1 &&
-                        p.getGamesPlayed() == 5
-        ));
+            servlet.saveProgress(request, quest);
+
+            mockedProgressManager.verify(() -> ProgressManager.saveProgress(argThat(p ->
+                    p.getPlayerName().equals("TestPlayer") &&
+                            p.getCurrentStep() == 1 &&
+                            p.getGamesPlayed() == 5
+            )));
+        }
     }
 }
