@@ -15,7 +15,7 @@
     @Setter
     @Getter
     public class GameStatistics {
-        private static final Path STATS_FILE_PATH = Path.of("data/game_stats.txt");
+        private static final Path STATS_FILE_PATH =  Paths.get(System.getProperty("user.dir"), "data", "game_stats.txt");
         private int gamesPlayed;
 
         public GameStatistics() {
@@ -47,8 +47,7 @@
             public void loadStats() {
                 try {
                     if (Files.exists(STATS_FILE_PATH)) {
-                        String content = new String(Files.readAllBytes
-                                (STATS_FILE_PATH));
+                        String content = Files.readString(STATS_FILE_PATH).trim();
                         gamesPlayed = Integer.parseInt(content.trim());
                     } else {
                         gamesPlayed = 0;

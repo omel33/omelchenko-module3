@@ -3,7 +3,6 @@ package quest.unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quest.model.PlayerProgress;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
